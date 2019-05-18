@@ -91,4 +91,20 @@ RSpec.describe ActiveRecord::BulkInsert do
       end
     end
   end
+
+  context 'rubocop' do
+    let(:report) { `bundle exec rubocop` }
+
+    it 'has no offenses' do
+      expect(report).to match(/no\ offenses\ detected/)
+    end
+  end
+
+  context 'brakeman' do
+    let(:report) { `bundle exec brakeman -q --force-scan --add-libs-path ./lib/` }
+
+    it 'has no offenses' do
+      expect(report).to match(/No\ warnings\ found/)
+    end
+  end
 end
