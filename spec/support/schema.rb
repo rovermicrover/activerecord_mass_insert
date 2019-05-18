@@ -12,7 +12,7 @@ ActiveRecord::Schema.define do
     t.boolean  :rescue
     t.datetime :birthday
     t.string   :owner
-    t.json     :meta
+    t.jsonb    :meta
     t.timestamps null: false
   end
 end
