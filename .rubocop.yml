@@ -1,0 +1,7 @@
+AllCops:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Style/MultilineBlockChain:
+  Enabled: false

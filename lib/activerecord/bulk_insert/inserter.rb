@@ -1,45 +1,44 @@
+# frozen_string_literal: true
+
 require 'forwardable'
-require 'securerandom'
 
 module ActiveRecord
   module BulkInsert
-    class Inserter
+    # Handles the building of the bulk insert statement
+    class Inserter < Statement
       extend Forwardable
 
-      attr_reader :model, :payload, :columns, :mapped_columns
+      def_delegators :model, :primary_key, :arel_table,
+                     :connection
 
-      def initialize(model, **data, *columns, **mapped_columns)
-        @model = model
-        @payload = data[:json].presence || (data[:hashes].presence || data[:objects].presence).to_json
-        @columns = columns
-        @mapped_columns = mapped_columns
+      def insert
+        connection.execute(sql)
       end
 
-      def_delegators :model, :column_for_attribute, :arel_table
+      def sql
+        [
+          model.send(:sanitize_sql_array, [statement.to_sql, payload]),
+          'RETURNING',
+          primary_key
+        ].join(' ')
+      end
 
-      def insert_statement
-        Arel::Nodes::InsertStatement.new.tap do |insert_manager|
-          insert_manager.relation = arel_table
-          insert_manager.values = values
-          insert_manager.columns = insert_columns
+      def statement
+        Arel::Nodes::InsertStatement.new.tap do |new_statement|
+          new_statement.relation = arel_table
+          new_statement.values = projection.statement
+          new_statement.columns = columns
         end
       end
 
-      def insert_columns
-        [
-          *columns.map { |column| arel_table[column] },
-          *mapped_columns.map { |column, mapping| arel_table[column] }
-        ]
+      def columns
+        matching_columns.concat(mapped_columns.keys).map do |column|
+          arel_table[column]
+        end
       end
 
-      def projection_table_name
-        @projection_table_name ||= ['json_projection', SecureRandom.hex].join('_')
-      end
-
-      def values
-        Arel::Nodes::NamedFunction.new('json_to_recordset', [Arel::Nodes::SqlLiteral.new('?')]).as(
-
-        )
+      def projection
+        Projection.new(model, payload, *matching_columns, **mapped_columns)
       end
     end
   end

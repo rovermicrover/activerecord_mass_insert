@@ -1,16 +1,27 @@
+# frozen_string_literal: true
+
+$LOAD_PATH << File.expand_path('spec')
+
 require 'bundler/setup'
 require 'pry'
+require 'pg'
+require 'active_record'
+
+if Object.const_defined?('RSpec')
+  require 'simplecov'
+  SimpleCov.start
+end
+
 require 'activerecord/bulk_insert'
 
 conn = PG.connect(dbname: 'postgres')
 
-conn.exec(
-  <<-SQL
-    DROP DATABASE IF EXISTS activerecord_bulk_insert;
-    CREATE DATABASE activerecord_bulk_insert;
-  SQL
+conn.exec('DROP DATABASE IF EXISTS activerecord_bulk_insert')
+conn.exec('CREATE DATABASE activerecord_bulk_insert')
+
+ActiveRecord::Base.establish_connection(
+  adapter: :postgresql, database: 'activerecord_bulk_insert'
 )
 
-ActiveRecord::Base.establish_connection adapter: :pg, database: "activerecord_bulk_insert"
-load 'schema.rb'
-load 'dog.rb'
+require 'support/schema'
+require 'support/dog'
