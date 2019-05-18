@@ -14,7 +14,7 @@ end
 
 require 'activerecord/bulk_insert'
 
-conn = PG.connect(dbname: 'postgres')
+conn = PG::Connection.connect(dbname: 'postgres')
 
 conn.exec('DROP DATABASE IF EXISTS activerecord_bulk_insert')
 conn.exec('CREATE DATABASE activerecord_bulk_insert')
