@@ -112,6 +112,25 @@ RSpec.describe ActiveRecord::MassInsert do
     end
   end
 
+  context 'empty' do
+    let(:dogs) { [] }
+
+    context 'ruby array' do
+      let(:payload) { [] }
+      include_examples 'insert and maps correctly'
+    end
+
+    context 'json array' do
+      let(:payload) { '[]' }
+      include_examples 'insert and maps correctly'
+    end
+
+    context 'nil' do
+      let(:payload) { nil }
+      include_examples 'insert and maps correctly'
+    end
+  end
+
   context 'rubocop' do
     let(:report) { `bundle exec rubocop` }
 

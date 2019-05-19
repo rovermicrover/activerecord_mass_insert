@@ -19,7 +19,16 @@ Or install it yourself as:
     $ gem install activerecord_mass_insert
 
 ## Usage
+
 ```ruby
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
+  extend ActiveRecord::MassInsert::Helper
+end
+
+class Dog < ApplicationRecord
+end
+
 payload = '[{"name":"Madison","breed":"Golden","meta":{"rescue":false,"age":null}},{"name":"Daisy","meta":{"rescue":true,"age":18}},{"name":"Gracey","meta":{"rescue":false,"nickname":"Scoogie","age":11}},{"name":"Sadie","meta":{"rescue":true,"dingo_blood":true,"age":11}},{"name":"Raymond","meta":{"rescue":null,"nickname":"Radar","tail":false,"age":11}},{"name":"Nemo","meta":{"rescue":true,"number_of_ears":1,"age":2}}]'
 
 dog_ids = Dog.mass_insert(payload, :name, created_at: 'NOW()', updated_at: 'NOW()')
@@ -31,8 +40,8 @@ puts dogs.first.name # => Madison
 ```
 
 For a payload you can pass a JSON objects by itself, in a JSON array, or a ruby array. You can also
-pass a ruby object that responds to to_json by itself or in an array. JSON will never be parsed to ruby.
-This done to ensure no time is wasted parsing json twice.
+pass a ruby object that responds to to_json by itself or in an array. nil payload is treated as an empty
+json array. JSON will never be parsed to ruby. This done to ensure no time is wasted parsing json twice.
 
 ## Development
 

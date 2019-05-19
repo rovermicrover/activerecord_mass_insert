@@ -12,5 +12,3 @@ module ActiveRecord
     end
   end
 end
-
-ActiveRecord::Base.extend(ActiveRecord::MassInsert::Helper)

@@ -16,7 +16,9 @@ module ActiveRecord
       private
 
       def payload_to_json_array(new_payload)
-        if new_payload.is_a?(Array) && new_payload.all? { |p| p.is_a?(String) }
+        if new_payload.nil?
+          new_payload = new_payload.to_s
+        elsif new_payload.is_a?(Array) && new_payload.all? { |p| p.is_a?(String) }
           # If payload is an array of strings, assume its an array
           # of json objects. contact them togther to form the
           # inner part of a json array.
