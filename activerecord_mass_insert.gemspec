@@ -2,17 +2,17 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'activerecord/bulk_insert/version'
+require 'activerecord/mass_insert/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'ActiveRecord::BulkInsert'
-  spec.version     = ActiveRecord::BulkInsert::VERSION.join('.')
+  spec.name        = 'ActiveRecord::MassInsert'
+  spec.version     = ActiveRecord::MassInsert::VERSION.join('.')
   spec.date        = '2019-05-01'
-  spec.summary     = 'Bulk Insert For ActiveRecord'
-  spec.description = 'Bulk Insert For ActiveRecord via Postgresql json_to_recordset'
+  spec.summary     = 'Mass Insert For ActiveRecord'
+  spec.description = 'Mass Insert For ActiveRecord via Postgresql json_to_recordset'
   spec.authors     = ['Andrew Rove']
   spec.email       = 'andrew.m.rove@gmail.com'
-  spec.homepage    = 'https://rubygemspec.org/gems/activerecord_bulk_insert'
+  spec.homepage    = 'https://rubygemspec.org/gems/activerecord_mass_insert'
   spec.license     = 'MIT'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|

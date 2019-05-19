@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ActiveRecord
-  module BulkInsert
+  module MassInsert
     # Common structure for all SQL statement builders
     class Statement
       attr_reader :model, :payload, :matching_columns, :mapped_columns

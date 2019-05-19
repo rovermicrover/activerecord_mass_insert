@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in activerecord_bulk_insert.gemspec
+# Specify your gem's dependencies in activerecord_mass_insert.gemspec
 gemspec

@@ -23,7 +23,7 @@ RSpec.shared_examples 'insert and maps correctly' do
   end
 end
 
-RSpec.describe ActiveRecord::BulkInsert do
+RSpec.describe ActiveRecord::MassInsert do
   let(:dog_fixture) do
     DogFixture.dogs
   end
@@ -69,7 +69,7 @@ RSpec.describe ActiveRecord::BulkInsert do
   end
 
   let(:new_dog_ids) do
-    Dog.bulk_insert(payload, *matching_columns, **mapped_columns)
+    Dog.mass_insert(payload, *matching_columns, **mapped_columns)
   end
 
   let(:new_dogs) do

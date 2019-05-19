@@ -12,15 +12,15 @@ if Object.const_defined?('RSpec')
   SimpleCov.start
 end
 
-require 'activerecord/bulk_insert'
+require 'activerecord/mass_insert'
 
 conn = PG::Connection.connect(dbname: 'postgres')
 
-conn.exec('DROP DATABASE IF EXISTS activerecord_bulk_insert')
-conn.exec('CREATE DATABASE activerecord_bulk_insert')
+conn.exec('DROP DATABASE IF EXISTS activerecord_mass_insert')
+conn.exec('CREATE DATABASE activerecord_mass_insert')
 
 ActiveRecord::Base.establish_connection(
-  adapter: :postgresql, database: 'activerecord_bulk_insert'
+  adapter: :postgresql, database: 'activerecord_mass_insert'
 )
 
 require 'support/schema'

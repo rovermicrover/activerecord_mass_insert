@@ -3,8 +3,8 @@
 require 'forwardable'
 
 module ActiveRecord
-  module BulkInsert
-    # Handles the building of the bulk insert statement
+  module MassInsert
+    # Handles the building of the mass insert statement
     class Inserter < Statement
       extend Forwardable
 

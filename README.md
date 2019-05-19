@@ -7,7 +7,7 @@ ActiveRecord >= 4.2 supported and tested.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'activerecord_bulk_insert', require: 'well_actually'
+gem 'activerecord_mass_insert', require: 'well_actually'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install activerecord_bulk_insert
+    $ gem install activerecord_mass_insert
 
 ## Usage
 ```ruby
@@ -33,7 +33,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/rovermicrover/activerecord_bulk_insert.
+Bug reports and pull requests are welcome on GitHub at https://github.com/rovermicrover/activerecord_mass_insert.
 
 
 ## License

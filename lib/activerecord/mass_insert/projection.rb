@@ -4,7 +4,7 @@ require 'forwardable'
 require 'securerandom'
 
 module ActiveRecord
-  module BulkInsert
+  module MassInsert
     # Handles the building of the select statement that projects the JSON array
     class Projection < Statement
       extend Forwardable
