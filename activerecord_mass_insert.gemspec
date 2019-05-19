@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'activerecord/mass_insert/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'ActiveRecord::MassInsert'
+  spec.name        = 'activerecord_mass_insert'
   spec.version     = ActiveRecord::MassInsert::VERSION.join('.')
   spec.date        = '2019-05-01'
   spec.summary     = 'Mass Insert For ActiveRecord'
