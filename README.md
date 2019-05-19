@@ -7,7 +7,7 @@ ActiveRecord >= 4.2 supported and tested.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'activerecord_mass_insert', require: 'well_actually'
+gem 'activerecord_mass_insert'
 ```
 
 And then execute:

@@ -3,16 +3,13 @@
 $LOAD_PATH << File.expand_path('spec')
 
 require 'bundler/setup'
-require 'pry'
-require 'pg'
-require 'active_record'
+Bundler.require(:default, :development)
+require 'activerecord_mass_insert'
 
 if Object.const_defined?('RSpec')
   require 'simplecov'
   SimpleCov.start
 end
-
-require 'activerecord/mass_insert'
 
 conn = PG::Connection.connect(dbname: 'postgres')
 
