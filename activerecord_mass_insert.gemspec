@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.69'
   spec.add_development_dependency 'simplecov', '~> 0.16'
   spec.add_development_dependency 'brakeman', '~> 4.5'
+  spec.add_development_dependency 'faker', '~> 1.9.3'
 end

@@ -4,7 +4,6 @@ ActiveRecord::Schema.define do
   self.verbose = false
 
   create_table :dogs, force: true do |t|
-    t.string   :type
     t.string   :name
     t.string   :nickname
     t.string   :breed
@@ -14,5 +13,9 @@ ActiveRecord::Schema.define do
     t.string   :owner
     t.jsonb    :meta
     t.timestamps null: false
+
+    t.index :name
+    t.index :breed
+    t.index :rescue
   end
 end

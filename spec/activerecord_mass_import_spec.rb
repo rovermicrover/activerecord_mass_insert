@@ -165,6 +165,15 @@ RSpec.describe ActiveRecord::MassInsert do
     include_examples 'no mapping insert and maps correctly'
   end
 
+  context 'large import' do
+    let(:dogs) { DogFixture.random_dogs.take(100) }
+    let(:payload) { dogs.to_json }
+
+    it 'should result in the correct number of rows' do
+      expect { new_dogs }.to change(Dog, :count).by(dogs.length)
+    end
+  end
+
   context 'rubocop' do
     let(:report) { `bundle exec rubocop` }
 
