@@ -1,7 +1,12 @@
 AllCops:
   Exclude:
-    - 'spec/**/*'
     - '*.gemspec'
 
 Style/MultilineBlockChain:
   Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
