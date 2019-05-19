@@ -12,7 +12,7 @@ gem 'activerecord_mass_insert'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
