@@ -9,8 +9,6 @@ module ActiveRecord
     class Projection < Statement
       extend Forwardable
 
-      def_delegators :model, :column_for_attribute
-
       def statement
         init_args = []
         init_args << arel_table.engine if arel_table.respond_to?(:engine)
@@ -20,6 +18,10 @@ module ActiveRecord
           select_manager.from(table)
         end
       end
+
+      private
+
+      def_delegators :model, :column_for_attribute
 
       def select
         [

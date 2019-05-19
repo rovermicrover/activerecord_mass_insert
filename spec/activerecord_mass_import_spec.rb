@@ -17,8 +17,27 @@ RSpec.shared_examples 'insert and maps correctly' do
       expect(new_dog.age).to be dog_meta[:age]
       # All of meta should be stored as a jsonb field and match up.
       expect(new_dog.meta).to eq dog_meta.map { |k, v| [k.to_s, v] }.to_h
-      # Event though some fixtures have breed it is not mapped and thus should not be set.
+      # Even though some fixtures have breed it is not mapped and thus should not be set.
       expect(new_dog.breed).to be nil
+    end
+  end
+end
+
+RSpec.shared_examples 'no mapping insert and maps correctly' do
+  it 'should result in the correct number of rows and a naive top level mapping' do
+    expect { new_dogs }.to change(Dog, :count).by(dogs.length)
+    new_dogs.each_with_index do |new_dog, index|
+      dog = dogs.dig(index)
+      # Direct and nested data should all map to columns correctly
+      expect(new_dog.name).to eq dog[:name]
+      expect(new_dog.breed).to eq dog[:breed]
+      # All of meta should be stored as a jsonb field and match up.
+      expect(new_dog.meta).to eq dog[:meta].map { |k, v| [k.to_s, v] }.to_h
+
+      # None of the nested fields should be mapped
+      expect(new_dog.nickname).to be nil
+      expect(new_dog.rescue).to be nil
+      expect(new_dog.age).to be nil
     end
   end
 end
@@ -129,6 +148,21 @@ RSpec.describe ActiveRecord::MassInsert do
       let(:payload) { nil }
       include_examples 'insert and maps correctly'
     end
+  end
+
+  context 'no mapping' do
+    let(:matching_columns) { [] }
+    let(:mapped_columns) { {} }
+    let(:dogs) { dog_fixture }
+    let(:payload) { dogs.to_json }
+    include_examples 'no mapping insert and maps correctly'
+  end
+
+  context 'nil mapping' do
+    let(:new_dog_ids) { Dog.mass_insert(payload) }
+    let(:dogs) { dog_fixture }
+    let(:payload) { dogs.to_json }
+    include_examples 'no mapping insert and maps correctly'
   end
 
   context 'rubocop' do

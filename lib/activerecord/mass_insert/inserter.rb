@@ -8,8 +8,6 @@ module ActiveRecord
     class Inserter < Statement
       extend Forwardable
 
-      def_delegators :model, :primary_key, :arel_table, :connection
-
       def self.insert(*args)
         new(*args).insert
       end
@@ -17,6 +15,10 @@ module ActiveRecord
       def insert
         connection.execute(sql)
       end
+
+      private
+
+      def_delegators :model, :primary_key, :arel_table, :connection
 
       def sql
         [

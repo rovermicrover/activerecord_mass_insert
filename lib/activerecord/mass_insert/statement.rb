@@ -4,16 +4,35 @@ module ActiveRecord
   module MassInsert
     # Common structure for all SQL statement builders
     class Statement
-      attr_reader :model, :payload, :matching_columns, :mapped_columns
-
       def initialize(model, payload, *matching_columns, **mapped_columns)
         @model = model
         @payload = payload_to_json_array(payload)
-        @matching_columns = matching_columns
-        @mapped_columns = mapped_columns
+        if matching_columns.empty? && mapped_columns.empty?
+          @matching_columns = fallback_matching_columns(model)
+          @mapped_columns = fallback_mapped_columns(model)
+        else
+          @matching_columns = matching_columns
+          @mapped_columns = mapped_columns
+        end
       end
 
       private
+
+      attr_reader :model, :payload, :matching_columns, :mapped_columns
+
+      def fallback_matching_columns(new_model)
+        new_model.columns.map(&:name) - [new_model.primary_key, 'created_at', 'updated_at']
+      end
+
+      def fallback_mapped_columns(new_model)
+        {}.tap do |result|
+          %w[created_at updated_at].each do |column|
+            if new_model.columns_hash.keys.include?(column)
+              result[column.to_sym] = Arel::Nodes::NamedFunction.new('NOW', [])
+            end
+          end
+        end
+      end
 
       def payload_to_json_array(new_payload)
         if new_payload.nil?
