@@ -25,4 +25,5 @@ ActiveRecord::Base.establish_connection(
 
 require 'support/schema'
 require 'support/dog'
-require 'support/dog_fixture'
+
+Dir[File.join(__dir__, 'fixtures', '*.rb')].each { |file| require file }

@@ -8,10 +8,17 @@ RSpec.shared_examples 'insert and maps correctly' do
     new_dogs.each_with_index do |new_dog, index|
       dog = dogs.dig(index)
       dog_meta = dog[:meta]
+      # Direct and nested data should all map to columns correctly
       expect(new_dog.name).to eq dog[:name]
-      expect(new_dog.rescue).to be dog_meta[:rescue]
       expect(new_dog.nickname).to eq dog_meta[:nickname]
+      # Note PG < 11 does not have direct JSON boolean to boolean or JSON integer to integer cast
+      # support.
+      expect(new_dog.rescue).to be dog_meta[:rescue]
+      expect(new_dog.age).to be dog_meta[:age]
+      # All of meta should be stored as a jsonb field and match up.
       expect(new_dog.meta).to eq dog_meta.map { |k, v| [k.to_s, v] }.to_h
+      # Event though some fixtures have breed it is not mapped and thus should not be set.
+      expect(new_dog.breed).to be nil
     end
   end
 end
@@ -24,7 +31,7 @@ RSpec.describe ActiveRecord::BulkInsert do
   let(:matching_columns) { %i[name meta] }
   let(:mapped_columns) do
     {
-      nickname: nickname_mapping, rescue: rescue_mapping,
+      nickname: nickname_mapping, rescue: rescue_mapping, age: age_mapping,
       created_at: Arel::Nodes::NamedFunction.new('NOW', []), updated_at: 'NOW()'
     }
   end
@@ -42,7 +49,19 @@ RSpec.describe ActiveRecord::BulkInsert do
       inner_sql = Arel::Nodes::InfixOperation.new(
         '->>', arel_table[:meta], Arel::Nodes.build_quoted(column)
       ).as(
-        Arel::Nodes::SqlLiteral.new('Boolean')
+        Arel::Nodes::SqlLiteral.new('boolean')
+      )
+
+      Arel::Nodes::NamedFunction.new('CAST', [inner_sql])
+    }
+  end
+
+  let(:age_mapping) do
+    lambda { |arel_table, column|
+      inner_sql = Arel::Nodes::InfixOperation.new(
+        '->>', arel_table[:meta], Arel::Nodes.build_quoted(column)
+      ).as(
+        Arel::Nodes::SqlLiteral.new('integer')
       )
 
       Arel::Nodes::NamedFunction.new('CAST', [inner_sql])
