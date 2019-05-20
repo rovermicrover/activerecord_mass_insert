@@ -1,10 +1,7 @@
 AllCops:
   Exclude:
     - '*.gemspec'
-
-Style/StringLiterals:
-  Exclude:
-    -'*.gemfile'
+    - 'gemfiles/*.gemfile'
 
 Style/MultilineBlockChain:
   Enabled: false
