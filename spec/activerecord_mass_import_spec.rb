@@ -173,22 +173,4 @@ RSpec.describe ActiveRecord::MassInsert do
       expect { new_dogs }.to change(Dog, :count).by(dogs.length)
     end
   end
-
-  context 'rubocop' do
-    let(:report) { `bundle exec rubocop` }
-
-    it 'has no offenses' do
-      expect(report).to match(/no\ offenses\ detected/)
-    end
-  end
-
-  context 'brakeman' do
-    let(:report) do
-      `bundle exec brakeman -q --force-scan --add-libs-path ./lib/`
-    end
-
-    it 'has no offenses' do
-      expect(report).to match(/No\ warnings\ found/)
-    end
-  end
 end
