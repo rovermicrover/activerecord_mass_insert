@@ -184,6 +184,10 @@ jobs:
 
       - run:
           name: Performance Run
+          environment:
+            TEST_POSTGRESQL_PORT: 5432
+            TEST_POSTGRESQL_HOST: localhost
+            TEST_POSTGRESQL_USER: spec_user
           command: bundle exec ruby spec/performance.rb >> /tmp/test-results/benchmark.txt
 
       - store_test_results:
