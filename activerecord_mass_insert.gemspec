@@ -36,4 +36,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '~> 0.16'
   spec.add_development_dependency 'brakeman', '~> 4.5'
   spec.add_development_dependency 'faker', '~> 1.9.3'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
 end
