@@ -121,3 +121,11 @@ jobs:
           POSTGRES_PASSWORD: ""
 
     <<: *default
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build-ruby-2-6
+      - build-ruby-2-5
+      - build-ruby-2-4
