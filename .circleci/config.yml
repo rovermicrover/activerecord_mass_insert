@@ -122,10 +122,10 @@ jobs:
 
     <<: *default
 
-  build-postgres-9-5:
+  build-postgres-10:
     docker:
       - image: circleci/ruby:2.6
-      - image: circleci/postgres:9.5
+      - image: circleci/postgres:10
         environment: # environment variables for database
           POSTGRES_DB: postgres
           POSTGRES_USER: spec_user
@@ -144,10 +144,10 @@ jobs:
 
     <<: *default
 
-  build-postgres-10:
+  build-postgres-9-5:
     docker:
       - image: circleci/ruby:2.6
-      - image: circleci/postgres:10
+      - image: circleci/postgres:9.5
         environment: # environment variables for database
           POSTGRES_DB: postgres
           POSTGRES_USER: spec_user
@@ -162,6 +162,6 @@ workflows:
       - build-ruby-2-6
       - build-ruby-2-5
       - build-ruby-2-4
-      - build-postgres-9-5
-      - build-postgres-9-6
       - build-postgres-10
+      - build-postgres-9-6
+      - build-postgres-9-5
