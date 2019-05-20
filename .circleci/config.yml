@@ -1,9 +1,95 @@
 # Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+default: &default
+  working_directory: ~/activerecord_mass_insert
+  steps:
+    - checkout
+
+    - run:
+        name: install dependencies
+        command: bundle install --jobs=4 --retry=3
+
+    - run:
+        name: install dependencies versions
+        command: bin/setup
+
+    - run:
+        name: Wait for DB
+        command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+    - run:
+        name: Create Test Result Folder
+        command: mkdir /tmp/test-results
+
+    - run:
+        name: rubocop
+        command: bundle exec rubocop -o /tmp/test-results/rubocop.json -f j
+
+    - run:
+        name: brakeman
+        command: bundle exec brakeman -q --force-scan --add-libs-path ./lib/ -o /tmp/test-results/brakeman.txt
+
+    - run:
+        name: run tests against activerecord 4.2
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-4.2 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-4.2-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
+
+    - run:
+        name: run tests against activerecord 5.0
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-5.0 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-5.0-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
+
+    - run:
+        name: run tests  against activerecord 5.1
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-5.1 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-5.1-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
+
+    - run:
+        name: run tests  against activerecord 5.2
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-5.2 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-5.2-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
+    # collect reports
+    - store_test_results:
+        path: /tmp/test-results
+
 version: 2.1
 jobs:
-  build:
-    working_directory: ~/activerecord_mass_insert
-
+  build-ruby-2.6:
     docker:
       - image: circleci/ruby:2.6.3
       - image: circleci/postgres:9.5.17
@@ -12,88 +98,26 @@ jobs:
           POSTGRES_USER: spec_user
           POSTGRES_PASSWORD: ""
 
-    steps:
-      - checkout
+    <<: *default
 
-      - run:
-          name: install dependencies
-          command: bundle install --jobs=4 --retry=3
+  build-ruby-2.5:
+    docker:
+      - image: circleci/ruby:2.5.5
+      - image: circleci/postgres:9.5.17
+        environment: # environment variables for database
+          POSTGRES_DB: postgres
+          POSTGRES_USER: spec_user
+          POSTGRES_PASSWORD: ""
 
-      - run:
-          name: install dependencies versions
-          command: bin/setup
+    <<: *default
 
-      - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+  build-ruby-2.4:
+    docker:
+      - image: circleci/ruby:2.4.6
+      - image: circleci/postgres:9.5.17
+        environment: # environment variables for database
+          POSTGRES_DB: postgres
+          POSTGRES_USER: spec_user
+          POSTGRES_PASSWORD: ""
 
-      - run:
-          name: Create Test Result Folder
-          command: mkdir /tmp/test-results
-
-      - run:
-          name: rubocop
-          command: bundle exec rubocop -o /tmp/test-results/rubocop.json -f j
-
-      - run:
-          name: brakeman
-          command: bundle exec brakeman -q --force-scan --add-libs-path ./lib/ -o /tmp/test-results/brakeman.txt
-
-      - run:
-          name: run tests against activerecord 4.2
-          environment:
-            TEST_POSTGRESQL_PORT: 5432
-            TEST_POSTGRESQL_HOST: localhost
-            TEST_POSTGRESQL_USER: spec_user
-          command: |
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec appraisal activerecord-4.2 rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/activerecord-4.2-rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      - run:
-          name: run tests against activerecord 5.0
-          environment:
-            TEST_POSTGRESQL_PORT: 5432
-            TEST_POSTGRESQL_HOST: localhost
-            TEST_POSTGRESQL_USER: spec_user
-          command: |
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec appraisal activerecord-5.0 rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/activerecord-5.0-rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      - run:
-          name: run tests  against activerecord 5.1
-          environment:
-            TEST_POSTGRESQL_PORT: 5432
-            TEST_POSTGRESQL_HOST: localhost
-            TEST_POSTGRESQL_USER: spec_user
-          command: |
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec appraisal activerecord-5.1 rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/activerecord-5.1-rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      - run:
-          name: run tests  against activerecord 5.2
-          environment:
-            TEST_POSTGRESQL_PORT: 5432
-            TEST_POSTGRESQL_HOST: localhost
-            TEST_POSTGRESQL_USER: spec_user
-          command: |
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec appraisal activerecord-5.2 rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/activerecord-5.2-rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
+    <<: *default
