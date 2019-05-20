@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/rovermicrover/activerecord_mass_insert.svg?style=svg)](https://circleci.com/gh/rovermicrover/activerecord_mass_insert)
+
 ## Installation
 
 Requires Postgresql 9.5+
