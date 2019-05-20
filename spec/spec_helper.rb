@@ -10,13 +10,17 @@ end
 require 'bundler/setup'
 Bundler.require(:default, :development)
 
-conn = PG::Connection.connect(dbname: 'postgres')
+conn = PG::Connection.connect(
+  host: ENV['TEST_POSTGRESQL_HOST'], port: ENV['TEST_POSTGRESQL_PORT'],
+  user: ENV['TEST_POSTGRESQL_USER'], dbname: 'postgres'
+)
 
 conn.exec('DROP DATABASE IF EXISTS activerecord_mass_insert')
 conn.exec('CREATE DATABASE activerecord_mass_insert')
 
 ActiveRecord::Base.establish_connection(
-  adapter: :postgresql, database: 'activerecord_mass_insert'
+  adapter: :postgresql, host: ENV['TEST_POSTGRESQL_HOST'], port: ENV['TEST_POSTGRESQL_PORT'],
+  user: ENV['TEST_POSTGRESQL_USER'], database: 'activerecord_mass_insert'
 )
 
 require 'support/schema'
