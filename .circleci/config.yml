@@ -105,12 +105,13 @@ jobs:
   build-ruby-2-6:
     docker:
       - image: circleci/ruby:2.6
+        environment:
+          CC_TEST_REPORTER_ID: df0fdb5028d5457a5706f6aad35787a11d15a014a07c3149e34c7fc1feb842f6
       - image: circleci/postgres:11
         environment: # environment variables for database
           POSTGRES_DB: postgres
           POSTGRES_USER: spec_user
           POSTGRES_PASSWORD: ""
-          CC_TEST_REPORTER_ID: df0fdb5028d5457a5706f6aad35787a11d15a014a07c3149e34c7fc1feb842f6
 
     <<: *default
 
