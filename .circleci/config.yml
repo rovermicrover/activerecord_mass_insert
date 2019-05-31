@@ -6,6 +6,13 @@ default: &default
     - checkout
 
     - run:
+        name: Setup Code Climate test-reporter
+        command: |
+        # download test reporter as a static binary
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+
+    - run:
         name: install dependencies
         command: bundle install --jobs=4 --retry=3
 
@@ -78,12 +85,14 @@ default: &default
           TEST_POSTGRESQL_HOST: localhost
           TEST_POSTGRESQL_USER: spec_user
         command: |
+          [[ -n ${CC_TEST_REPORTER_ID} ]] && ./cc-test-reporter before-build
           TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
           bundle exec appraisal activerecord-5.2 rspec --format progress \
                           --format RspecJunitFormatter \
                           --out /tmp/test-results/activerecord-5.2-rspec.xml \
                           --format progress \
                           $TEST_FILES
+          [[ -n ${CC_TEST_REPORTER_ID} ]] && ./cc-test-reporter after-build --coverage-input-type simplecov
 
     - store_test_results:
         path: /tmp/test-results
@@ -98,6 +107,7 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_USER: spec_user
           POSTGRES_PASSWORD: ""
+          CC_TEST_REPORTER_ID: df0fdb5028d5457a5706f6aad35787a11d15a014a07c3149e34c7fc1feb842f6
 
     <<: *default
 
