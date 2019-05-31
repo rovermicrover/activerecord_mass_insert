@@ -1,8 +1,4 @@
-[![CircleCI](https://circleci.com/gh/rovermicrover/activerecord_mass_insert.svg?style=svg)](https://circleci.com/gh/rovermicrover/activerecord_mass_insert)
-
-[![Maintainability](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/maintainability)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/maintainability)
-
-[![Test Coverage](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/test_coverage)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/test_coverage)
+[![CircleCI](https://circleci.com/gh/rovermicrover/activerecord_mass_insert.svg?style=svg)](https://circleci.com/gh/rovermicrover/activerecord_mass_insert) [![Maintainability](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/maintainability)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/test_coverage)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/test_coverage)
 
 ## Installation
 
