@@ -94,6 +94,7 @@ default: &default
 
     - run:
         name: upload coverage to code climate
+        command: |
           ([[ -n ${CC_TEST_REPORTER_ID} ]] && ./cc-test-reporter after-build -t simplecov) || true
 
     - store_test_results:
