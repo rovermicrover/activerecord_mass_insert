@@ -64,7 +64,7 @@ default: &default
                           $TEST_FILES
 
     - run:
-        name: run tests  against activerecord 5.1
+        name: run tests against activerecord 5.1
         environment:
           TEST_POSTGRESQL_PORT: 5432
           TEST_POSTGRESQL_HOST: localhost
@@ -78,7 +78,7 @@ default: &default
                           $TEST_FILES
 
     - run:
-        name: run tests  against activerecord 5.2
+        name: run tests against activerecord 5.2
         environment:
           TEST_POSTGRESQL_PORT: 5432
           TEST_POSTGRESQL_HOST: localhost
@@ -96,6 +96,20 @@ default: &default
         name: upload coverage to code climate
         command: |
           ([[ -n ${CC_TEST_REPORTER_ID} ]] && ./cc-test-reporter after-build -t simplecov) || true
+
+    - run:
+        name: run tests against activerecord 6.0
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-6.0 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-6.0-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
 
     - store_test_results:
         path: /tmp/test-results
@@ -118,17 +132,6 @@ jobs:
   build-ruby-2-5:
     docker:
       - image: circleci/ruby:2.5
-      - image: circleci/postgres:11
-        environment: # environment variables for database
-          POSTGRES_DB: postgres
-          POSTGRES_USER: spec_user
-          POSTGRES_PASSWORD: ""
-
-    <<: *default
-
-  build-ruby-2-4:
-    docker:
-      - image: circleci/ruby:2.4
       - image: circleci/postgres:11
         environment: # environment variables for database
           POSTGRES_DB: postgres
@@ -213,7 +216,6 @@ workflows:
     jobs:
       - build-ruby-2-6
       - build-ruby-2-5
-      - build-ruby-2-4
       - build-postgres-10
       - build-postgres-9-6
       - build-postgres-9-5
