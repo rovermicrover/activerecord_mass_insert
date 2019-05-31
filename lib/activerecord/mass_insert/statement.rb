@@ -35,6 +35,10 @@ module ActiveRecord
       end
 
       def payload_to_json_array(new_payload)
+        wrap_payload(standardize_payload(new_payload))
+      end
+
+      def standardize_payload(new_payload)
         if new_payload.nil?
           new_payload = new_payload.to_s
         elsif new_payload.is_a?(Array) && new_payload.all? { |p| p.is_a?(String) }
@@ -46,6 +50,9 @@ module ActiveRecord
           # Otherwise transform to JSON
           new_payload = new_payload.to_json
         end
+      end
+
+      def wrap_payload(new_payload)
         # If payload is not a json array wrap it in brackets to make it so.
         new_payload.start_with?('[') ? new_payload : "[#{new_payload}]"
       end
