@@ -97,6 +97,20 @@ default: &default
         command: |
           ([[ -n ${CC_TEST_REPORTER_ID} ]] && ./cc-test-reporter after-build -t simplecov) || true
 
+    - run:
+        name: run tests  against activerecord 6.0
+        environment:
+          TEST_POSTGRESQL_PORT: 5432
+          TEST_POSTGRESQL_HOST: localhost
+          TEST_POSTGRESQL_USER: spec_user
+        command: |
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-6.0 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-6.0-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
+
     - store_test_results:
         path: /tmp/test-results
 
