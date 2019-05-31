@@ -1,5 +1,8 @@
 [![CircleCI](https://circleci.com/gh/rovermicrover/activerecord_mass_insert.svg?style=svg)](https://circleci.com/gh/rovermicrover/activerecord_mass_insert) [![Maintainability](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/maintainability)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/88fdc770f138c6ae5eb5/test_coverage)](https://codeclimate.com/github/rovermicrover/activerecord_mass_insert/test_coverage)
 
+## Purpose
+Mass Insert For ActiveRecord via Postgresql json_to_recordset. Can handle raw JSON directly into Postgresql.
+
 ## Installation
 
 Requires Postgresql 9.5+
@@ -30,11 +33,62 @@ end
 
 class Dog < ApplicationRecord
 end
+```
 
-payload = '[{"name":"Madison","breed":"Golden","meta":{"rescue":false,"age":null}},{"name":"Daisy","meta":{"rescue":true,"age":18}},{"name":"Gracey","meta":{"rescue":false,"nickname":"Scoogie","age":11}},{"name":"Sadie","meta":{"rescue":true,"dingo_blood":true,"age":11}},{"name":"Raymond","meta":{"rescue":null,"nickname":"Radar","tail":false,"age":11}},{"name":"Nemo","meta":{"rescue":true,"number_of_ears":1,"age":2}}]'
+For a payload you can pass a JSON objects by itself, in a JSON array, or a ruby array. You can also
+pass a ruby object that responds to to_json by itself or in an array. nil payload is treated as an empty
+json array. JSON will never be parsed to ruby. This done to ensure no time is wasted parsing json twice.
+
+### Payload As JSON Array
+
+```ruby
+payload <<-JSON    
+  [
+    {"name":"Madison","breed":"Golden","meta":{"rescue":false,"age":null}},
+    {"name":"Daisy","meta":{"rescue":true,"age":18}},
+    {"name":"Gracey","meta":{"rescue":false,"nickname":"Scoogie","age":11}},
+    {"name":"Sadie","meta":{"rescue":true,"dingo_blood":true,"age":11}},
+    {"name":"Raymond","meta":{"rescue":null,"nickname":"Radar","tail":false,"age":11}},
+    {"name":"Nemo","meta":{"rescue":true,"number_of_ears":1,"age":2}}
+  ]
+JSON
 
 dog_ids = Dog.mass_insert(payload)
+```
 
+### Payload As Ruby Array Of JSON Objects
+
+```ruby
+payload = [
+  '{"name":"Madison","breed":"Golden","meta":{"rescue":false,"age":null}}',
+  '{"name":"Daisy","meta":{"rescue":true,"age":18}}',
+  '{"name":"Gracey","meta":{"rescue":false,"nickname":"Scoogie","age":11}}',
+  '{"name":"Sadie","meta":{"rescue":true,"dingo_blood":true,"age":11}}',
+  '{"name":"Raymond","meta":{"rescue":null,"nickname":"Radar","tail":false,"age":11}}',
+  '{"name":"Nemo","meta":{"rescue":true,"number_of_ears":1,"age":2}}',
+]
+
+dog_ids = Dog.mass_insert(payload)
+```
+
+### Payload As Ruby Array Of Ruby Objects That Responds To to_json
+
+```ruby
+payload = [
+  { name: 'Madison', breed: 'Golden', meta: { rescue: false, age: nil } },
+  { name: 'Daisy', meta: { rescue: true, age: 18 } },
+  { name: 'Gracey', meta: { rescue: false, nickname: 'Scoogie', age: 11 } },
+  { name: 'Sadie', meta: { rescue: true, dingo_blood: true, age: 11 } },
+  { name: 'Raymond', meta: { rescue: nil, nickname: 'Radar', tail: false, age: 11 } },
+  { name: 'Nemo', meta: { rescue: true, number_of_ears: 1, age: 2 } },
+]
+
+dog_ids = Dog.mass_insert(payload)
+```
+
+### Results For All
+
+```ruby
 dogs = Dog.find(dog_ids)
 
 puts dogs.count # => 6
@@ -42,10 +96,6 @@ puts dogs.first.name # => Madison
 puts dogs.first.breed # => Golden
 puts dogs.first.meta # => { "rescue" => false, "age" => null }
 ```
-
-For a payload you can pass a JSON objects by itself, in a JSON array, or a ruby array. You can also
-pass a ruby object that responds to to_json by itself or in an array. nil payload is treated as an empty
-json array. JSON will never be parsed to ruby. This done to ensure no time is wasted parsing json twice.
 
 ## Development
 
