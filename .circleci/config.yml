@@ -104,15 +104,12 @@ default: &default
           TEST_POSTGRESQL_HOST: localhost
           TEST_POSTGRESQL_USER: spec_user
         command: |
-          if [ -z "$SKIP_RAILS_6" ]
-          then
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            bundle exec appraisal activerecord-6.0 rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/activerecord-6.0-rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-          fi
+          TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          bundle exec appraisal activerecord-6.0 rspec --format progress \
+                          --format RspecJunitFormatter \
+                          --out /tmp/test-results/activerecord-6.0-rspec.xml \
+                          --format progress \
+                          $TEST_FILES
 
     - store_test_results:
         path: /tmp/test-results
@@ -140,19 +137,6 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_USER: spec_user
           POSTGRES_PASSWORD: ""
-
-    <<: *default
-
-  build-ruby-2-4:
-    docker:
-      - image: circleci/ruby:2.4
-      - image: circleci/postgres:11
-        environment: # environment variables for database
-          POSTGRES_DB: postgres
-          POSTGRES_USER: spec_user
-          POSTGRES_PASSWORD: ""
-    environment: # Rails 6 does not support ruby 2.4 so skip rails 6
-      SKIP_RAILS_6: true
 
     <<: *default
 
@@ -232,7 +216,6 @@ workflows:
     jobs:
       - build-ruby-2-6
       - build-ruby-2-5
-      - build-ruby-2-4
       - build-postgres-10
       - build-postgres-9-6
       - build-postgres-9-5

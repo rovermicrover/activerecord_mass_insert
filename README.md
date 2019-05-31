@@ -9,6 +9,8 @@ Requires Postgresql 9.5+
 
 ActiveRecord >= 4.2 supported and tested.
 
+Ruby >= 2.5 supported and tested.
+
 Add this line to your application's Gemfile:
 
 ```ruby
