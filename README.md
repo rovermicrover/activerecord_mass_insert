@@ -99,6 +99,50 @@ puts dogs.first.breed # => Golden
 puts dogs.first.meta # => { "rescue" => false, "age" => null }
 ```
 
+## Mappings
+
+You can also delcare your mappings. 
+
+The second argument of mass_insert is an array of directly one to one mapped columns.
+
+The third argument of mass_insert is a hash of column names to either lambda that return an arel statement, an arel node, or a string.
+
+```ruby
+Dog.mass_insert(
+  payload,
+  # Directly mapped columns for name (string) and meta (jsonb)
+  :name, :meta, 
+  # Inspect the meta json object to pull out nickname (string)
+  nickname: lambda { |arel_table, column|
+    Arel::Nodes::InfixOperation.new(
+      '->>', arel_table[:meta], Arel::Nodes.build_quoted(column)
+    )
+  },
+  # Inspect the meta json object to pull out rescue (boolean)
+  rescue: lambda { |arel_table, column|
+    inner_sql = Arel::Nodes::InfixOperation.new(
+      '->>', arel_table[:meta], Arel::Nodes.build_quoted(column)
+    ).as(
+      Arel::Nodes::SqlLiteral.new('boolean')
+    )
+
+    Arel::Nodes::NamedFunction.new('CAST', [inner_sql])
+  },
+  # Inspect the meta json object to pull out age (integer)
+  age: lambda { |arel_table, column|
+    inner_sql = Arel::Nodes::InfixOperation.new(
+      '->>', arel_table[:meta], Arel::Nodes.build_quoted(column)
+    ).as(
+      Arel::Nodes::SqlLiteral.new('integer')
+    )
+
+    Arel::Nodes::NamedFunction.new('CAST', [inner_sql])
+  },
+  # For less complex mappings you can use a simple Arel::Node or a String
+  created_at: Arel::Nodes::NamedFunction.new('NOW', []), updated_at: 'NOW()'
+ )
+```
+
 ## Development
 
 Requires Postgresql 9.5+
