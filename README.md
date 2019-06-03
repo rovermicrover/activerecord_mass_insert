@@ -9,7 +9,7 @@ Requires Postgresql 9.5+
 
 ActiveRecord >= 4.2 supported and tested.
 
-Ruby >= 2.5 supported and tested.
+Ruby >= 2.5 supported and tested. Though Ruby >= 2.3 should work, they are currently untested.
 
 Add this line to your application's Gemfile:
 
